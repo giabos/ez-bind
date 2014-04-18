@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="../src/ez-bind.js"></script>
+	<style>
+		.red {
+		  color: red;  
+		}
+		.block-display {
+		  display: block;      
+		}
+	</style>
+</head>
+<body>
+    <input ez-value="count">
+    <input ez-value="data1">
+    <span ez-text="data1"></span>
+  
+    <hr>
+
+    <button ez-on="click: add">Add</button>
+	<button ez-on="click: removeSelected" ez-show="showBtn">Delete</button>
+    <ul>
+      <li ez-repeat="list">
+		<input type="checkbox" ez-checked="flag">
+        <span ez-text="value"></span><input ez-value="value"><span ez-text="text" ez-class="red:value"></span><input ez-value="text">
+		<button ez-on="click:^remove">Remove</button>
+      </li>   
+    </ul>
+    
+    
+    <hr>
+    
+    <input type="checkbox" ez-checked="flag">
+    <span ez-text="flag" ez-class="red:flag"></span>
+    
+    <hr>
+    
+    <label><input name="opt" value="opt1" type="radio" ez-checked="opt">opt1</label>
+    <label><input name="opt" value="opt2" type="radio" ez-checked="opt">opt2</label>
+    
+    <span ez-text="opt"></span>
+    
+    <hr>
+    
+    <label><input type="checkbox" ez-checked="show">show</label>
+    <span class="block-display" ez-show="show">BLABLA</span>
+    
+    <hr>
+     
+    <label><input type="checkbox" ez-checked="show2">show</label>
+    <span style="display: inline-block;" ez-show="show2">BLABLA</span>
+    
+	<hr>
+	
+	<ul>
+		<li ez-repeat="list2">  <input ez-value="."> <span ez-text="."></span></li>
+	</ul>
+	
+	
+	<hr>
+
+    
+        <select ez-value="data1">
+            <option value="">Select</option>
+            <option ez-repeat="list2" ez-text="."></option>
+        </select>
+        <input ez-value="data1">
+    
+    
+	<hr>
+	
+	<ul>
+		<li ez-repeat="tweets.statuses">
+			<span ez-html="html"></span> / <b ez-text="user.location"></b> / <a ez-attr="href:user.url" target="_blank" ez-text="user.name"></a>
+		</li>
+	</ul>
+
+    <input ez-value="ph"><input ez-attr="placeholder:ph">
+	
+    
+    <script src="app.js"></script>
+</body>
+</html>

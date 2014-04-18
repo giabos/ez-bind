@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/qunit/1.14.0/qunit.min.css">
+	
+	<style>
+		.red {
+			color: red;
+		}
+	</style>
+	
+</head>
+<body>
+
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+	
+	<hr>
+    
+    <div id="T1">
+        <h3>T1</h3>
+        <span ez-text="data"></span>
+        <hr>
+    </div>
+
+    <div id="T2">
+        <h3>T2</h3>
+        <input ez-value="data" value="">
+        <span ez-text="data"></span>
+        <hr>
+    </div>
+
+    <div id="T3">
+        <h3>T3</h3>
+        <input ez-value="data">
+        <span ez-text="data"></span>
+        <button ez-on="click: change">Change</button>
+        <hr>
+    </div>
+    
+    <div id="T4">
+        <h3>T4</h3>
+        <ul>
+            <li ez-repeat="list">
+                <span ez-text="data">aaaa</span>
+            </li>
+        </ul>
+        <hr>
+    </div>
+
+	<div id="T5">
+        <h3>T5</h3>
+		<input name="value" ez-value="value">
+        <ul>
+            <li ez-repeat="list">
+                <label><input type="radio" name="selection" ez-checked="^value" ez-value="."><span ez-text="."></span></label>
+            </li>
+        </ul>
+        <hr>
+    </div>
+    
+	<div id="T6">
+        <h3>T6</h3>
+		<span ez-text="resp.k1"></span>
+		<span ez-text="resp.k2"></span>
+        <hr>
+    </div>	
+	
+	<script src="http://cdn.jsdelivr.net/jquery/1.10.2/jquery-1.10.2.min.js"></script>
+	<script src="http://cdn.jsdelivr.net/jquery.migrate/1.2.1/jquery-migrate.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/qunit/1.14.0/qunit.min.js"></script>
+	<script src="../src/ez-bind.js"></script>
+    <script src="test.js"></script>
+</body>
+</html>
