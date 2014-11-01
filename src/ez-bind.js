@@ -233,10 +233,10 @@ VM.bindingHandlers = {
     "ez-on": function (self, attrValue, element, arrayIndex) {
         var params = attrValue.split(/\s*\:\s*/);
         if (params.length !== 2) throw "ez-event format: <event-name> : <func-to-call>";
-        element.addEventListener(params[0], function () {
+        element.addEventListener(params[0], function (evt) {
             if (typeof self[params[1]] === 'function')  {
                 self._do(function () {
-                    self[params[1]].call(self, arrayIndex);
+                    self[params[1]].call(self, evt, arrayIndex);
                 });
             }
         });
