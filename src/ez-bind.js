@@ -214,6 +214,11 @@ VM.bindingHandlers = {
         var oldVisibility = element.style.display;
         self._listen(attrValue, function (newVal) { element.style.display = newVal ? oldVisibility : "none";  });
     },
+    "ez-style": function (self, attrValue, element) {
+        var params = attrValue.trim().split(/\s*\:\s*/);
+        if (params.length !== 2) throw "ez-style format: <style-name>:<property-path>";
+        self._listen(params[1], function (newVal) { element.style[params[0]] = newVal; });
+    },
     "ez-attr": function (self, attrValue, element) {
         var params = attrValue.trim().split(/\s*\:\s*/);
         if (params.length !== 2) throw "ez-attr format: <attr-name>:<property-path>";
