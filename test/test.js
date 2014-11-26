@@ -29,7 +29,7 @@ $.fn.triggerChange = function () {
 test("listen simple item", function () {
 	var vm = new EZ(), newValue;
 	vm._listen('count', function (nv, old) { newValue = nv; }); 
-	vm._do(function () {  vm.count = 2; });
+	vm._apply(function () {  vm.count = 2; });
 	equal( newValue, 2);
 });
 
@@ -37,10 +37,10 @@ test("listen array item", function () {
 	var vm = new EZ(), newVal, oldVal;
 	vm.list = [{count: 4}];
 	vm._listen('list[0].count', function (nv, old) { newVal = nv; oldVal = old; }); 
-	vm._do(function () {  vm.list[0].count = 2;  });
+	vm._apply(function () {  vm.list[0].count = 2;  });
 	equal(newVal, 2);
 	equal(oldVal, undefined);
-	vm._do(function () {  vm.list[0].count = 11;  });
+	vm._apply(function () {  vm.list[0].count = 11;  });
 	equal(newVal, 11);
 	equal(oldVal, 2);
 });
@@ -52,13 +52,13 @@ test("listen on all items of a array", function () {
 	vm._listen('list[*].data', function (nv, old) { newVal.push(nv); oldVal.push(old); count++; });
 
 	
-	vm._do(function () { vm.list[1].data = 55; });
+	vm._apply(function () { vm.list[1].data = 55; });
 	equal(count, 3, "listener function should be called 3 times, for each item in array as everything is new");
 	deepEqual(newVal, [4,55,6]);
 	deepEqual(oldVal, [undefined, undefined, undefined], "no value previously");
 	
 	newVal = []; oldVal = []; count = 0;
-	vm._do(function () { vm.list[0].data = 44;   vm.list[2].data = 66;  });
+	vm._apply(function () { vm.list[0].data = 44;   vm.list[2].data = 66;  });
 	equal(count, 2);
 	deepEqual(newVal, [44, 66]);
 	deepEqual(oldVal, [4, 6]);
@@ -68,13 +68,13 @@ test("'ez-text' binding", function () {
 	var vm = new EZ();
 	vm._bind(document.getElementById("T1"));
 	
-	vm._do(function () {
+	vm._apply(function () {
 		vm.data = "aa";
 	});
 	
 	equal($('#T1 span').text(), "aa", "text span changed to aa");
 	
-	vm._do(function () {
+	vm._apply(function () {
 		vm.data = "bb";
 	});
 	
@@ -85,7 +85,7 @@ test("'ez-value' binding", function () {
 	var vm = new EZ();
 	vm._bind(document.getElementById('T2'));
 	
-	vm._do(function () {
+	vm._apply(function () {
 		vm.data = "aa";
 	});
 	equal($('#T2 span').text(), "aa", "change of model implies change of text");
@@ -103,7 +103,7 @@ test("'ez-event' binding", function () {
 	
 	vm.change = function () { vm.data = "changed";  };
 	
-	vm._do(function () {
+	vm._apply(function () {
 		vm.data = "aa";
 	});
 
@@ -118,7 +118,7 @@ test("ez-repeat 1", function () {
 	vm._bind(document.getElementById("T4"));
     vm.list = [];
 
-	vm._do(function () {
+	vm._apply(function () {
 		vm.list.push( {data: "aaa"} );
 		vm.list.push( {data: "bbb"} );
 		vm.list.push( {data: "ccc"} );
@@ -134,7 +134,7 @@ test("go to parent", function () {
     vm.list = [];
 	vm.value = undefined;
 	
-	vm._do(function () {
+	vm._apply(function () {
 		vm.list.push( 1 );
 		vm.list.push( 2 );
 		vm.list.push( 3 );

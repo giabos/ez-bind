@@ -20,7 +20,7 @@ vm.add = function () {
     vm.list.push({value: 99, text: "new"});    
 };
 
-vm._do(function () {
+vm._apply(function () {
 	vm.count = 5;
 	vm.data1 = "coucou"; 
 	//vm.flag = true;

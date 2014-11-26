@@ -128,7 +128,7 @@ VM.prototype._unlisten = function (propertyPath) {
         }
     }
 };
-VM.prototype._do = function (fn) {
+VM.prototype._apply = function (fn) {
     try {
         return fn.call(this);
     } finally {
@@ -163,7 +163,7 @@ VM.bindingHandlers = {
             }
         });
         element.addEventListener('change', function () {
-            self._do(function () {
+            self._apply(function () {
                 self._set(propertyPath, element.selectedIndex !== undefined ? element.options[element.selectedIndex].value /* for IE8 */ : element.value);
             });
         });
@@ -195,7 +195,7 @@ VM.bindingHandlers = {
             case "checkbox":
                 self._listen(propertyPath, function (newVal) { element.checked = !!newVal; });
                 element.addEventListener('change', function () {
-                    self._do(function () {
+                    self._apply(function () {
                         self._set(propertyPath, element.checked);
                     });
                 });
@@ -203,7 +203,7 @@ VM.bindingHandlers = {
             case "radio":
                 self._listen(propertyPath, function (newVal) {  element.checked = element.value === newVal; });
                 element.addEventListener('change', function () {
-                    self._do(function () {
+                    self._apply(function () {
                         self._set(propertyPath, element.checked ? element.value : undefined);
                     });
                 });
@@ -240,7 +240,7 @@ VM.bindingHandlers = {
         if (params.length !== 2) throw "ez-event format: <event-name> : <func-to-call>";
         element.addEventListener(params[0], function (evt) {
             if (typeof self[params[1]] === 'function')  {
-                self._do(function () {
+                self._apply(function () {
                     self[params[1]].call(self, evt, arrayIndex);
                 });
             }
@@ -398,7 +398,7 @@ VM.prototype._getJsonP = function (url, dataOrFunc, func) {
     script.type = 'text/javascript';
     
     window[data.callback] = function (content) {
-        self._do(function () {
+        self._apply(function () {
             if (typeof (dataOrFunc) === 'function') { 
                 dataOrFunc(content);
             } else {
@@ -423,7 +423,7 @@ VM.prototype._getJson = function (url, dataOrFunc, func) {
     var handler = function () {
         var f = typeof(dataOrFunc) === 'function' ? dataOrFunc : func, 
             args = arguments;
-        self._do(function () {
+        self._apply(function () {
             f.apply(self, args);
         });
     };
@@ -441,7 +441,7 @@ VM.prototype._postJson = function (url, dataOrFunc, func) {
     var handler = function () {
         var f = typeof(dataOrFunc) === 'function' ? dataOrFunc : func, 
             args = arguments;
-        self._do(function () {
+        self._apply(function () {
             f.apply(self, args);
         });
     };
