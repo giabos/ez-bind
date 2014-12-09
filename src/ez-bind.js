@@ -172,7 +172,7 @@ VM.bindingHandlers = {
         self._listen(propertyPath, function (newVal) {
             element.value = newVal;
         });
-        element.addEventListener('keypress', function () {
+        element.addEventListener('keydown', function () {
             self._apply(function () {
                 self._set(propertyPath, element.selectedIndex !== undefined ? element.options[element.selectedIndex].value /* for IE8 */ : element.value);
             });
