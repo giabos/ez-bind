@@ -148,7 +148,7 @@ VM.bindingHandlers = {
             element.innerHTML = newVal;
         });
     },    
-	"ez-value": function (self, propertyPath, element) {
+	"ez-value": function (self, propertyPath, element) { // for input & select
         self._listen(propertyPath, function (newVal) {
             if (element.selectedIndex !== undefined) {  // element is a 'select' element.
                 // necessary for IE8 !!
@@ -163,6 +163,16 @@ VM.bindingHandlers = {
             }
         });
         element.addEventListener('change', function () {
+            self._apply(function () {
+                self._set(propertyPath, element.selectedIndex !== undefined ? element.options[element.selectedIndex].value /* for IE8 */ : element.value);
+            });
+        });
+    },
+	"ez-input": function (self, propertyPath, element) { // for input only (value updated on keypress)
+        self._listen(propertyPath, function (newVal) {
+            element.value = newVal;
+        });
+        element.addEventListener('keypress', function () {
             self._apply(function () {
                 self._set(propertyPath, element.selectedIndex !== undefined ? element.options[element.selectedIndex].value /* for IE8 */ : element.value);
             });
