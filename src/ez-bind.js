@@ -168,27 +168,46 @@ VM.bindingHandlers = {
             });
         });
     },
+    // formats:
+    //     ez-class="<class-name>:<property-path>" : class-name added to element when property results to 'true'
+    //     ez-class="<property-path>" : the class name referred by property-path is added to element.
     "ez-class": function (self, attrValue, element) {
         var params = attrValue.trim().split(/\s*\:\s*/);
-        if (params.length !== 2) throw "ez-class format: <class-name>:<property-path>";
-        self._listen(params[1], function (newVal) {
-            if (element.classList) {
-                if (newVal) {
-                    element.classList.add(params[0]);
+        if (params.length === 2) {
+            self._listen(params[1], function (newVal) {
+                if (element.classList) {
+                    if (newVal) {
+                        element.classList.add(params[0]);
+                    } else {
+                        element.classList.remove(params[0]);
+                    }
                 } else {
-                    element.classList.remove(params[0]);
+                    var classes = element.className.split(/\s+/);
+                    if (newVal) {
+                        classes.push(params[0]);
+                    } else {
+                        var i = classes.indexOf(params[0]);
+                        if (i >= 0) classes.splice(i,1);
+                    }
+                    element.className = classes.join(' ');            
                 }
-            } else {
-                var classes = element.className.split(/\s+/);
-                if (newVal) {
-                    classes.push(params[0]);
+            });
+        } 
+        if (params.length === 1) {
+            self._listen(attrValue.trim(), function (newVal, oldVal) {
+                if (element.classList) {
+                    element.classList.remove(oldVal);
+                    element.classList.add(newVal);
                 } else {
-                    var i = classes.indexOf(params[0]);
+                    var classes = element.className.split(/\s+/);
+                    var i = classes.indexOf(oldVal);
                     if (i >= 0) classes.splice(i,1);
+                    classes.push(newVal);
+                    element.className = classes.join(' ');            
                 }
-                element.className = classes.join(' ');            
-            }
-        });
+
+            });
+        }
     },
     "ez-checked": function (self, propertyPath, element) {
         switch (element.type) {
