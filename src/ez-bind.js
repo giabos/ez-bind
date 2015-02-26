@@ -237,21 +237,15 @@ VM.bindingHandlers = {
         });
     },
     "ez-on": function (self, attrValue, element, arrayIndex) {  // format: ez-on="click:doit,focus:dothat"
-        function addBinding (bindingDescr) {
-           var params = bindingDescr.split(/\s*\:\s*/);
-           if (params.length !== 2) throw "ez-on format: <event-name> : <func-to-call>";
-           element.addEventListener(params[0], function (evt) {
-               if (typeof self._get(params[1]) === 'function')  {
-                   self._apply(function () {
-                       self._get(params[1]).call(self, evt, arrayIndex);
-                   });
-               }
-           });
-        }
-        var bindings = attrValue.trim().split(/\s*\,\s*/);
-        for(var i = 0; i < bindings.length; i++) {
-           addBinding((bindings[i]));
-        }
+        var params = attrValue.split(/\s*\:\s*/);
+        if (params.length !== 2) throw "ez-event format: <event-name> : <func-to-call>";
+        element.addEventListener(params[0], function (evt) {
+            if (typeof self._get(params[1]) === 'function')  {
+                self._apply(function () {
+                    self._get(params[1]).call(self, evt, arrayIndex);
+                });
+            }
+        });
     },
     "ez-repeat": function (self, propertyPath, element) {
         var parentElement = element.parentNode, templateElement = parentElement.removeChild(element);
@@ -282,24 +276,29 @@ VM.prototype._bind = function (element, propertyPathPrefix) {
     // iterate over all 'ez-...' attributes
     for (var i = 0; i < element.attributes.length; i++) {
         var attr = element.attributes[i], attrName = attr.name.toLowerCase();
-        if (VM.bindingHandlers[attrName] !== undefined) {
-            var prefix = propertyPathPrefix || '',
-                parts = attr.value.trim().split(/\s*\:\s*/),
-                specifier = parts.length > 1 ? parts[0] : '',
-                path = parts.length > 1 ? parts[1] : parts [0],
-                newPath = prefix + path,
-				matchIndex = /\[(\d+)\][^\[\]]*/.exec(propertyPathPrefix),
-				arrayIndex = matchIndex !== null ? matchIndex[1] : undefined;
-				
-            newPath = newPath.replace(/\.\.\s*$/, '');  
-            newPath = newPath.replace(/\w+\[\d+\]\.\s*\^/, ""); // interpret the go to parent character ^
-            var attrValue = (specifier ? specifier + ':' : '') + newPath;
-            var stopBinding = VM.bindingHandlers[attrName](this,  attrValue, element, arrayIndex);
-            if (stopBinding) return; // stop binding the rest as it will parsed when adding new items to the array => see ez-repeat binding 
-        } else {
-            if (attrName.indexOf('ez-') === 0) {
-                throw "unknown binding:" + attrName;
-            }
+        var values = attr.value.trim().split(/\s*\,\s*/);
+        for (var j = 0; j < values.length; j ++) {
+           var value = values[j];
+           if (VM.bindingHandlers[attrName] !== undefined) {
+               var prefix = propertyPathPrefix || '',
+                   parts = value.trim().split(/\s*\:\s*/),
+                   specifier = parts.length > 1 ? parts[0] : '',
+                   path = parts.length > 1 ? parts[1] : parts [0],
+                   newPath = prefix + path,
+                   matchIndex = /\[(\d+)\][^\[\]]*/.exec(propertyPathPrefix),
+                   arrayIndex = matchIndex !== null ? matchIndex[1] : undefined;
+
+               newPath = newPath.replace(/\.\.\s*$/, '');  
+               newPath = newPath.replace(/\w+\[\d+\]\.\s*\^/, ""); // interpret the go to parent character ^
+               newPath = newPath.replace(/^[^\~]*\~/, ""); // interpret the go to root character ~
+               var attrValue = (specifier ? specifier + ':' : '') + newPath;
+               var stopBinding = VM.bindingHandlers[attrName](this,  attrValue, element, arrayIndex);
+               if (stopBinding) return; // stop binding the rest as it will parsed when adding new items to the array => see ez-repeat binding 
+           } else {
+               if (attrName.indexOf('ez-') === 0) {
+                   throw "unknown binding:" + attrName;
+               }
+           }
         }
     }
     // iterate over children elements.
