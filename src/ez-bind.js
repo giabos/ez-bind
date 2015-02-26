@@ -1,4 +1,4 @@
-/* global document,window,Node,XMLHttpRequest,setTimeout,Element */
+/* global document,window,Node,XMLHttpRequest,setTimeout,Element, define */
 
 ;(function () {
 
@@ -233,28 +233,25 @@ VM.bindingHandlers = {
         var params = attrValue.trim().split(/\s*\:\s*/);
         if (params.length !== 2) throw "ez-attr format: <attr-name>:<property-path>";
         self._listen(params[1], function (newVal) {
-            /*
-            var attr = element.getAttribute(params[0]);
-            if (attr === null) {
-                attr = document.createAttribute(params[0]);
-                element.setAttributeNode(attr);
-            }
-            console.log(newVal);
-            attr.value = newVal;
-            */
             element.setAttribute(params[0], newVal);
         });
     },
-    "ez-on": function (self, attrValue, element, arrayIndex) {
-        var params = attrValue.split(/\s*\:\s*/);
-        if (params.length !== 2) throw "ez-event format: <event-name> : <func-to-call>";
-        element.addEventListener(params[0], function (evt) {
-            if (typeof self._get(params[1]) === 'function')  {
-                self._apply(function () {
-                    self._get(params[1]).call(self, evt, arrayIndex);
-                });
-            }
-        });
+    "ez-on": function (self, attrValue, element, arrayIndex) {  // format: ez-on="click:doit,focus:dothat"
+        function addBinding (bindingDescr) {
+           var params = bindingDescr.split(/\s*\:\s*/);
+           if (params.length !== 2) throw "ez-on format: <event-name> : <func-to-call>";
+           element.addEventListener(params[0], function (evt) {
+               if (typeof self._get(params[1]) === 'function')  {
+                   self._apply(function () {
+                       self._get(params[1]).call(self, evt, arrayIndex);
+                   });
+               }
+           });
+        }
+        var bindings = attrValue.trim().split(/\s*\,\s*/);
+        for(var i = 0; i < bindings.length; i++) {
+           addBinding((bindings[i]));
+        }
     },
     "ez-repeat": function (self, propertyPath, element) {
         var parentElement = element.parentNode, templateElement = parentElement.removeChild(element);
